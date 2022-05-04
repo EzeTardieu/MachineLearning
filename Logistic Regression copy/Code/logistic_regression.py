@@ -83,6 +83,8 @@ while(i<predictions.size):
     print("Prediction:",predictions[i],"; Real value:",y_test[i])
     i=i+1
 
+
+
 #And we added predictions on the train data aswell out of curiosity
 
 predictions =np.where(model.predict(X_train_scaled) > 0.5, 1,0) 
@@ -95,3 +97,7 @@ while(i<predictions.size/4):
     i=i+1
 
 #It is important to say that this model was implemented on a dataset with very few but maybe obvious data.
+
+
+sns.regplot(x=np.asarray(df.iloc[:, -2:-1].values).astype('float32'), y=y, data=df.iloc[:, :-2], logistic=True, ci=None, scatter_kws={'color': 'black'}, line_kws={'color': 'red'})
+plt.show()
