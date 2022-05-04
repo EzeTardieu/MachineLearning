@@ -14,7 +14,7 @@ import seaborn as sns
 
 ##We are going to predict whether a flower is an iris-setosa or not
 
-df = pd.read_csv('C:/Users/ezequ/Desktop/Facultad/Machine learning/Logistic Regression copy/Data/iris.csv', header = None)
+df = pd.read_csv('C:/Users/ezequ/Desktop/Facultad/Machine learning/MachineLearning/Logistic Regression copy/Data/iris.csv', header = None)
 
 #We exclude the column names
 df = df.iloc[1: , :]
@@ -47,8 +47,8 @@ X_test_scaled = scaler.transform(X_test)
 
 model= Sequential()
 model.add(Dense(1, activation='sigmoid'))
-model.compile(optimizer = 'SGD', loss= 'binary_crossentropy')
-model.fit(X_train_scaled,y_train, epochs = 64, verbose = 0)
+model.compile(optimizer = 'SGD', loss= 'binary_crossentropy', metrics = ['accuracy'])
+model.fit(X_train_scaled,y_train, epochs = 64, verbose = 1)
 J_list = model.history.history['loss']
 plt.plot(J_list)
 plt.xlabel("Epochs")
