@@ -34,6 +34,8 @@ print(dataset.tail())
 train_dataset = dataset.sample(frac=0.8,random_state=0)
 test_dataset = dataset.drop(train_dataset.index)
 
+#We check the distribution of train data
+
 sns.pairplot(train_dataset[["MPG", "Cylinders", "Displacement", "Weight"]], diag_kind="kde")
 plt.show(block=True)
 
@@ -45,10 +47,14 @@ train_stats
 train_labels = train_dataset.pop('MPG')
 test_labels = test_dataset.pop('MPG')
 
+#Next, we normalize both the data used for training and testing
+
 def norm(x):
   return (x - train_stats['mean']) / train_stats['std']
 normed_train_data = norm(train_dataset)
 normed_test_data = norm(test_dataset)
+
+#We create and compile our model
 
 def build_model():
   model = keras.Sequential([
@@ -64,11 +70,13 @@ def build_model():
 
 model = build_model()
 
+#This lines prints on the terminal a description of the model created
+
 model.summary()
 
 example_batch = normed_train_data[:10]
 example_result = model.predict(example_batch)
-example_result
+print("example result:",example_result)
 
 # Display training progress by printing a single dot for each completed epoch
 class PrintDot(keras.callbacks.Callback):
@@ -86,6 +94,8 @@ history = model.fit(
 hist = pd.DataFrame(history.history)
 hist['epoch'] = history.epoch
 print(hist.tail())
+
+#this function is used to create two different graphs that shows train and validation error during the epochs
 
 def plot_history(history):
   hist = pd.DataFrame(history.history)
@@ -117,16 +127,20 @@ plot_history(history)
 
 model = build_model()
 
-# The patience parameter is the amount of epochs to check for improvement
+# The patience parameter is the amount of epochs to check for improvement. Basically, this allows us to train the model good enough without having to wait a lot of epochs
 early_stop = keras.callbacks.EarlyStopping(monitor='val_loss', patience=10)
 
 history = model.fit(normed_train_data, train_labels, epochs=EPOCHS, validation_split = 0.2, verbose=0, callbacks=[early_stop, PrintDot()])
 
 plot_history(history)
 
+##we evaluate how well the model performed
+
 loss, mae, mse = model.evaluate(normed_test_data, test_labels, verbose=2)
 
 print("Testing set Mean Abs Error: {:5.2f} MPG".format(mae))
+
+#And then the model does its job which is to predict. We can see in the following graph the real values, and the model's prediction
 
 test_predictions = model.predict(normed_test_data).flatten()
 
@@ -140,6 +154,7 @@ plt.ylim([0,plt.ylim()[1]])
 _ = plt.plot([-100, 100], [-100, 100])
 plt.show(block=True)
 
+#This last graph will show the error distribution
 
 error = test_predictions - test_labels
 plt.hist(error, bins = 25)
